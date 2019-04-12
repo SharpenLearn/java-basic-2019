@@ -1,0 +1,27 @@
+version: "2"
+
+services:
+  mvn:
+    image: maven:3-jdk-8
+    working_dir: /usr/src/app
+    volumes_from:
+      - data
+    entrypoint: ["mvn"]
+
+  gitbook:
+    build:
+      context: .
+      dockerfile: ./doc/Dockerfile
+    ports:
+      - 4000:4000
+    volumes_from:
+      - data
+    entrypoint: ["gitbook"]
+    command: ["serve"]
+
+  data:
+    image: busybox
+    volumes:
+      - ${PWD}/doc:/gitbook
+      - ${PWD}/.m2:/root/.m2
+      - ${PWD}:/usr/src/app
